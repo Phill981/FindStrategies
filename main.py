@@ -1,41 +1,41 @@
 import streamlit as st
 import StockHandler as Sh
-import requests
-from bs4 import BeautifulSoup
+from strategies.TransitionStates import TransitionStates
 
-
-
+def display_stock_info(stock_info):
+    st.table(stock_info)
 
 sh = Sh.StockHandler()
+strategy = TransitionStates()
 
 st.write("""
-    # Markov Chain Analyze your Company
-    
+    # Get your Trades
          This is a small project, which help you analyze companies and backtracks their strategies
          """)
 
-ticker = st.text_input('What stock do you want to analyze?', 'AAPL')
-wantedPercent = st.text_input('How much percent should a transition have to be highlighted?', '60')
+index = st.selectbox(
+    'Which index would you like to analyze?',
+    ('S&P 500', 'NASDAQ', 'DAX')
+    )
 
-df = sh.dataframeMatrix(ticker)
-df5 = sh.createFiveDayMatrix(ticker)
+option = st.selectbox(
+    'Which strategy would you like to use to analyze your trades?',
+    ('No Strategy', 'Transition Matrix')
+)
 
-st.write(f"""    
-    ## Analytics and Transition Matrix of {ticker} 
-         """)
+trades = list()
 
-st.write("""    
-    ### Transition matrix - 1 day
-         """)
-st.dataframe(
-        df,
-        use_container_width=True
-        )
+if option == "No strategy":
+    trades.clear()
+elif(option == "Transition Matrix"):
+    for ticker in sh.getTickers():
+        strategyResult = strategy.startStrategy(ticker)
+        if(strategyResult["status"]):
+            del strategyResult["status"]
+            trades += [strategyResult]
+    display_stock_info(trades)
+        
 
-st.write("""
-    ### Transition matrix - 5 days
-         """)
-st.dataframe(
-        df5,
-        use_container_width=True
-        )
+        
+
+
