@@ -15,11 +15,13 @@ class TransitionStates:
                     return "long"
         return "no call"
     
-    def calculate_average_movement(self, 
+    def _calculateAverageMovement(self, 
             data:DataFrame, 
             start_index:int, 
             end_index:int)->float:
-        movements = [data['Close'][i] - data['Open'][i] for i in range(start_index, end_index + 1)]
+        movements = [
+            data['Close'][i] - data['Open'][i] 
+            for i in range(start_index, end_index + 1)]
         return sum(movements) / len(movements)
     
     def _calcAvgMov(self, data:DataFrame, movement:str):
@@ -41,21 +43,21 @@ class TransitionStates:
                 consecutive_positive_days = 0
 
             if consecutive_positive_days == consecutive_days:
-                total_up_movement += self.calculate_average_movement(
+                total_up_movement += self._calculateAverageMovement(
                     data, 
                     i - consecutive_days + 1,
                     i)
                 consecutive_positive_days = 0
 
             elif consecutive_negative_days == consecutive_days:
-                total_down_movement += self.calculate_average_movement(
+                total_down_movement += self._calculateAverageMovement(
                     data, 
                     i - consecutive_days + 1,
                     i)
                 consecutive_negative_days = 0
 
         if movement == "up":
-            average_up_movement = total_up_movement / (len(data) - consecutive_days)
+            average_up_movement = total_up_movement /(len(data) - consecutive_days)
             return average_up_movement
         elif movement == "down":
             average_down_movement = total_down_movement / (len(data) - consecutive_days)
@@ -64,13 +66,11 @@ class TransitionStates:
             return 0.0
         
         
-    def formatTodaysDate(self)->str:
-
+    def _formatTodaysDate(self)->str:
         today_date = datetime.now().strftime("%Y-%m-%d")
         return today_date
     
-    def formatEarlierDate(self, yearsBack:int)->str:
-        
+    def _formatEarlierDate(self, yearsBack:int)->str:
         today_date = datetime.now()
         three_years_ago_date = today_date - timedelta(days=yearsBack * 365)
         formatted_date = three_years_ago_date.strftime("%Y-%m-%d")
@@ -120,7 +120,6 @@ class TransitionStates:
                 ]
     
     def _analyze(self, data: DataFrame, ticker:str, move:str)->dict:
-        
         call = self._getCall(data)
         transitionMatrecies = self._calculateTransitionMatrecies(data)
         
@@ -147,12 +146,11 @@ class TransitionStates:
     def startStrategy(self, ticker:str)->dict:
         # Variable to determine how long ago the data should be grabbed from. 
         # Decided on three so avg values do not differ to much.
-        yearsBackData:int = 3
-        
+        yearsBackData = 3
         data = yf.download(
             ticker, 
-            start=self.formatEarlierDate(yearsBackData), 
-            end=self.formatTodaysDate(), 
+            start=self._formatEarlierDate(yearsBackData), 
+            end=self._formatTodaysDate(), 
             progress=False)
         data = self._formatDataFrame(data)
         

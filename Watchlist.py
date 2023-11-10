@@ -1,8 +1,4 @@
-import yfinance as yf
 import json
-import numpy as np
-import pandas as pd
-
 class Watchlist:
     def __init__(self) -> None:
         self.tickers = self._readWatchlist() 
@@ -41,9 +37,3 @@ class Watchlist:
         with open("watchlist.json", "w") as jfile:
             jObj = json.dumps(data)
             jfile.write(jObj)
-
-    def getDataframeFromStock(self, ticker)->pd.DataFrame:
-        data = yf.download(ticker)
-        data["daily_return"] = data["Adj Close"].pct_change()
-        data["state"] = np.where(data["daily_return"] >= 0, "up", "down")
-        return data        
