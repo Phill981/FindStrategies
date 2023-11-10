@@ -3,17 +3,17 @@ import StockHandler as Sh
 from strategies.TransitionStates import TransitionStates
 import os
 
-def filterTrades(trades, percentage):
+def filterTrades(trades, percentage)->list[dict]:
     filteredTrades = []
     for trade in trades:
         if(trade["probability"] >= percentage):
             filteredTrades += [trade]
     return filteredTrades 
 
-def display_stock_info(stock_info):
+def display_stock_info(stock_info)->None:
     st.table(stock_info)
     
-def getStrategies():
+def getStrategies() ->list[str]:
     strategies = os.listdir("./strategies")
     strategies.remove("__pycache__")
     return [strategy for strategy in strategies]

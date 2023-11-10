@@ -1,19 +1,20 @@
 import yfinance as yf
 import json
 import numpy as np
+import pandas as pd
 class StockHandler:
     def __init__(self) -> None:
         self.tickers = self._readWatchlist() 
 
-    def _readWatchlist(self):
+    def _readWatchlist(self)->list[str]:
         with open("watchlist.json", "r") as jfile:
             data = json.load(jfile)
         return data["stock"]        
     
-    def getTickers(self):
+    def getTickers(self) ->list[str]:
         return self.tickers
     
-    def addTickerToWatchlist(self, newTicker):
+    def addTickerToWatchlist(self, newTicker)->None:
         try:
             with open("watchlist.json", "r") as jfile:
                 data = json.load(jfile)
@@ -28,7 +29,7 @@ class StockHandler:
         except Exception as e:
             print(f"An error occurred: {e}")
     
-    def removeTickerFromWatchlist(self, ticker):
+    def removeTickerFromWatchlist(self, ticker)->None:
         with open("watchlist.json", "r") as jfile:
             data = json.load(jfile)
             try:
@@ -40,7 +41,7 @@ class StockHandler:
             jObj = json.dumps(data)
             jfile.write(jObj)
 
-    def getDataframeFromStock(self, ticker):
+    def getDataframeFromStock(self, ticker)->pd.DataFrame:
         data = yf.download(ticker)
         data["daily_return"] = data["Adj Close"].pct_change()
         data["state"] = np.where(data["daily_return"] >= 0, "up", "down")
