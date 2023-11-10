@@ -2,7 +2,8 @@ import yfinance as yf
 import json
 import numpy as np
 import pandas as pd
-class StockHandler:
+
+class Watchlist:
     def __init__(self) -> None:
         self.tickers = self._readWatchlist() 
 
