@@ -28,10 +28,11 @@ watchlist = Watchlist()
 strategies = Strategies()
 
 trades:list[dict] = list()
-
-st.write("""
-    # Analyze your trades
-         """)
+st.set_page_config(
+    page_title='Trade Analysis', 
+    layout = 'centered'
+    )
+st.title("Trading Analysis")
 
 # Select the index that shall be analyzed
 index = st.selectbox(
@@ -69,8 +70,9 @@ if buttonPress:
                     del strategyResult["status"]
                     if strategyResult["probability"] >= percentage:
                         trades += [strategyResult]
-                        trades = filterTrades(trades, percentage)
-                        trades = getTopMoves(trades)[:13]
+            trades = filterTrades(trades, percentage)
+            trades = getTopMoves(trades)[:13]
+
 
 # Displaying the final table
 if(len(trades) > 0):
