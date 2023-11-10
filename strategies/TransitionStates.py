@@ -73,7 +73,7 @@ class TransitionStates:
         return data
     
     def _get_current_price(self, ticker):
-        stock = yf.download(ticker)
+        stock = yf.download(ticker, progress=False)
         current_price = stock["Close"].to_list()[-1]
         return current_price       
         
@@ -126,14 +126,15 @@ class TransitionStates:
                 "call" : call,
                 "price goal" : round(priceGoal[0], 2),
                 #"price goal AVG" : round(priceGoal[1], 2),
-                "current price" : round(currentPrice, 2)
+                "current price" : round(currentPrice, 2),
+                "probability" : transitionMatrecies[0] if call == "short" else transitionMatrecies[1]
             }
         else:
             return {"status" : False}
         
     
     def startStrategy(self, ticker)->dict[any, any]:
-        data = yf.download(ticker, start=self.get_three_years_ago_date(), end=self.get_todays_date())
+        data = yf.download(ticker, start=self.get_three_years_ago_date(), end=self.get_todays_date(), progress=False)
         data = self._formatDataFrame(data)
         
         lastThreeDays = data.head(3)["state"].to_list()
