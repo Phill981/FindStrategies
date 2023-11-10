@@ -1,4 +1,4 @@
-from TransitionStates import TransitionStates
+from strategies.TransitionStates import TransitionStates
 from dataclasses import dataclass
 from typing import Callable
 

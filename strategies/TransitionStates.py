@@ -141,8 +141,7 @@ class TransitionStates:
             }
         else:
             return {"status" : False}
-        
-    
+                    
     def startStrategy(self, ticker:str)->dict:
         # Variable to determine how long ago the data should be grabbed from. 
         # Decided on three so avg values do not differ to much.

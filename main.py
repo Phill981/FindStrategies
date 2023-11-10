@@ -2,6 +2,18 @@ import streamlit as st
 from Watchlist import Watchlist
 from strategies.Strategies import Strategies
 
+def getTopMoves(arr):
+        orderedArray = []
+        tradeArray = arr
+        while len(tradeArray) > 0:
+            maxIndex = 0
+            for index in range(len(tradeArray)):
+                if (tradeArray[index]["probability"] > tradeArray[maxIndex]["probability"]):
+                    maxIndex = index
+            orderedArray.append(tradeArray[maxIndex])
+            del tradeArray[maxIndex]
+        return orderedArray
+
 def filterTrades(trades, percentage:float)->list[dict]:
     filteredTrades = []
     for trade in trades:
@@ -58,6 +70,7 @@ if buttonPress:
                     if strategyResult["probability"] >= percentage:
                         trades += [strategyResult]
                         trades = filterTrades(trades, percentage)
+                        trades = getTopMoves(trades)[:13]
 
 # Displaying the final table
 if(len(trades) > 0):
