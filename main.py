@@ -1,7 +1,6 @@
 import streamlit as st
 from Watchlist import Watchlist
-from strategies.TransitionStates import TransitionStates
-import os
+from strategies.Strategies import Strategies
 
 def filterTrades(trades, percentage:float)->list[dict]:
     filteredTrades = []
@@ -12,49 +11,54 @@ def filterTrades(trades, percentage:float)->list[dict]:
 
 def display_stock_info(stock_info:list[dict])->None:
     st.table(stock_info)
-    
-def getStrategies() ->list[str]:
-    strategies = os.listdir("./strategies")
-    strategies.remove("__pycache__")
-    return [strategy for strategy in strategies]
 
 watchlist = Watchlist()
-strategy = TransitionStates()
+strategies = Strategies()
+
 trades:list[dict] = list()
 
 st.write("""
     # Analyze your trades
          """)
 
+# Select the index that shall be analyzed
 index = st.selectbox(
     'Which index would you like to analyze?',
     ('S&P 500', 'NASDAQ', 'DAX')
     )
 
+# Select the strategy to analyze the list
 option = st.selectbox(
     'Which strategy would you like to use to analyze your trades?',
-    ["No Strategy"] + getStrategies()
+    ["No Strategy"] + [strategy.name for strategy in strategies.getStrategies()]
 )
 
-
+# If the transition matrix strategy is chosen, we need to dynamically 
+# set the percentage. Hence, the number input 
 percentage = st.number_input(
     "Minimum probability wanted",
     max_value=1.0, min_value=0.0,
-    step=.05) if option == "TransitionStates.py" else  0.0
+    step=.05) if option == "Transition States" else  0.0
 
 buttonPress = st.button("Start", type="primary")
 
 if buttonPress:
-    if option == "No strategy":
-        trades.clear()
-    elif(option == "TransitionStates.py"):
-        for ticker in watchlist.getTickers():
-            strategyResult = strategy.startStrategy(ticker)
-            if(strategyResult["status"]):
-                del strategyResult["status"]
-                if strategyResult["probability"] >= percentage:
-                    trades += [strategyResult]
-                    trades = filterTrades(trades, percentage)
+    match option:
+        case  "No strategy":
+            trades.clear()
+        case  "Transition States":
+            strategy = strategies.getFunction("Transition States")
+            # put this into a function when more methods have been added
+            for ticker in watchlist.getTickers():
+                
+                strategyResult = strategy(ticker)
+                if(strategyResult["status"]):
+                    #the status is not needed anymore
+                    del strategyResult["status"]
+                    if strategyResult["probability"] >= percentage:
+                        trades += [strategyResult]
+                        trades = filterTrades(trades, percentage)
 
+# Displaying the final table
 if(len(trades) > 0):
     display_stock_info(trades)
