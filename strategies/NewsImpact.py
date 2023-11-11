@@ -2,27 +2,26 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from urllib.request import urlopen, Request
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-
+from typing import Any
 class NewsImpact:
-    def __init__(self):
-        self.tickers = []
-        self.news_tables = {}
+    def __init__(self)->None:
+        self.news_tables:dict[str, Any] = {}
         self.analyzer = SentimentIntensityAnalyzer()
 
-    def download_data(self, ticker):
+    def download_data(self, ticker:str)->None:
         finwiz_url = 'https://finviz.com/quote.ashx?t='
         url = finwiz_url + ticker
         headers = {'User-Agent': 'Mozilla/5.0'}
         req = Request(url=url, headers=headers)
         try:
             resp = urlopen(req)
-        except:
+        except Exception: 
             self.news_tables[ticker] = ""
         html = BeautifulSoup(resp, features="lxml")
         news_table = html.find(id='news-table')
         self.news_tables[ticker] = news_table
 
-    def analyze_sentiment(self, ticker):
+    def analyze_sentiment(self, ticker:str)->pd.DataFrame:
         parsed_news = []
         for file_name, news_table in self.news_tables.items():
             for x in news_table.findAll('tr'):
@@ -47,7 +46,7 @@ class NewsImpact:
         news_df['Date'] = pd.to_datetime(news_df['Date'], errors='coerce').dt.date
         return news_df
 
-    def startStrategy(self, ticker):
+    def startStrategy(self, ticker:str)->dict:
         self.download_data(ticker)
         
         sentiment_df = self.analyze_sentiment(ticker)
