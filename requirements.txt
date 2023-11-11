@@ -3,4 +3,5 @@ nltk
 yfinance
 numpy
 pandas
+streamlit
 
