@@ -18,7 +18,7 @@ class Strategies:
             transitionStates.startStrategy
             ),
         Strategy(
-            "News Impact",
+            "News Impact (In Progres...)",
             newsImpact.startStrategy
         )
     ]
