@@ -56,28 +56,27 @@ percentage = st.number_input(
 buttonPress = st.button("Start", type="primary")
 
 if buttonPress:
-    match option:
-        case  "No strategy":
-            trades.clear()
-        case  "Transition States":
-            trades = []
-            strategy = strategies.getFunction("Transition States")
-            # put this into a function when more methods have been added
-            for ticker in watchlist.getTickers():
+    if option == "No Strategy":
+        trades.clear()
+    elif option == "Transition States":
+        trades = []
+        strategy = strategies.getFunction("Transition States")
+        # put this into a function when more methods have been added
+        for ticker in watchlist.getTickers():
                 
-                strategyResult = strategy(ticker)
-                if(strategyResult["status"]):
-                    #the status is not needed anymore
-                    del strategyResult["status"]
-                    if strategyResult["probability"] >= percentage:
-                        trades += [strategyResult]
-            trades = filterTrades(trades, percentage)
-            trades = getTopMoves(trades)[:13]
-        case "News Impact":
-            trades = []
-            strategy = strategies.getFunction("News Impact")
-            for ticker in watchlist.getTickers():
-                trades += strategy(ticker)
+            strategyResult = strategy(ticker)
+            if(strategyResult["status"]):
+                #the status is not needed anymore
+                del strategyResult["status"]
+                if strategyResult["probability"] >= percentage:
+                    trades += [strategyResult]
+        trades = filterTrades(trades, percentage)
+        trades = getTopMoves(trades)[:13]
+    elif option == "News Impact":
+        trades = []
+        strategy = strategies.getFunction("News Impact")
+        for ticker in watchlist.getTickers():
+            trades += strategy(ticker)
 
 # Displaying the final table
 if(len(trades) > 0):
