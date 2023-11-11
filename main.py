@@ -60,6 +60,7 @@ if buttonPress:
         case  "No strategy":
             trades.clear()
         case  "Transition States":
+            trades = []
             strategy = strategies.getFunction("Transition States")
             # put this into a function when more methods have been added
             for ticker in watchlist.getTickers():
@@ -72,7 +73,11 @@ if buttonPress:
                         trades += [strategyResult]
             trades = filterTrades(trades, percentage)
             trades = getTopMoves(trades)[:13]
-
+        case "News Impact":
+            trades = []
+            strategy = strategies.getFunction("News Impact")
+            for ticker in watchlist.getTickers():
+                trades += strategy(ticker)
 
 # Displaying the final table
 if(len(trades) > 0):

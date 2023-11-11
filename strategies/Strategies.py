@@ -1,4 +1,5 @@
 from strategies.TransitionStates import TransitionStates
+from strategies.NewsImpact import NewsImpact
 from dataclasses import dataclass
 from typing import Callable
 
@@ -8,13 +9,18 @@ class Strategy:
     strategy: Callable
     
 class Strategies:
-    transitionStates = TransitionStates() 
+    transitionStates = TransitionStates()
+    newsImpact = NewsImpact()
     
     strategies = [
         Strategy(
             "Transition States",
             transitionStates.startStrategy
-            )
+            ),
+        Strategy(
+            "News Impact",
+            newsImpact.startStrategy
+        )
     ]
     
     def getStrategies(self)->list[Strategy]:
